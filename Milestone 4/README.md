@@ -28,7 +28,7 @@ Three different matroid-constrained set cover implementations are provided:
 
 ```bash
 # Clone this repository
-git clone <repository-url>
+git clone "https://github.com/HiitsHamza/Algo.git"
 cd ./Milestone4
 
 # Install dependencies
@@ -44,7 +44,7 @@ The demo CLI provides an interactive way to test the algorithm on different grap
 python -m demo.demo --graph ER --n 200
 
 # Specify more parameters
-python -m demo.demo --graph ER --n 200 --p 0.05 --t_ratio 0.2 --k_ratio 0.5 --D_star 3 --iters 20 --samples 20
+python -m demo.demo --graph ER --n 500 --p 0.005 --t_ratio 0.2 --k_ratio 0.6 --D_star 3 --iters 20 --samples 20
 ```
 
 Command-line arguments:
