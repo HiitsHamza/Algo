@@ -1,0 +1,66 @@
+\documentclass[12pt]{article}
+\usepackage[margin=0.7in]{geometry}
+\usepackage{times}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\begin{document}
+
+\begin{center}
+{\Large \bf Milestone 1: Paper Selection Proposal}\\[0.2cm]
+{\bf Habib University}\\[0.4cm]
+{\bf Hamza Abdullah (ha07194)}\\
+\end{center}
+
+\noindent
+\textbf{Paper Identification:}\\
+\emph{The Telephone k-Multicast Problem} \\
+\textbf{Authors:} Daniel Hathcock, Guy Kortsarz, and R. Ravi \\
+\textbf{Venue:} Accepted in APPROX 2024 \\
+\textbf{Source:} \href{https://arxiv.org/pdf/2410.01048}{arXiv:2410.01048}
+
+\vspace{0.3cm}
+
+\noindent
+\textbf{Problem Statement \& Motivation:}\\
+In the Telephone Model, a root node must disseminate a message to a set of terminals in as few rounds as possible, with each informed node calling exactly one neighbor per round. This paper focuses on the \emph{k-multicast variant} (reaching any \(k\) out of \(t\) terminals), which is highly relevant to applications like distributed databases and sensor networks, where not all nodes require simultaneous updates.
+
+\vspace{0.2cm}
+
+\noindent
+\textbf{Key Contributions (Directed Graphs):}
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{Low-Poise Tree Construction:} Builds a multicast tree minimizing ``poise'' (height + maximum node degree).
+    \item \textbf{Greedy Decomposition:} Iteratively finds disjoint ``good'' trees covering about \(\sqrt{k}\) terminals each, connecting them via shortest paths to achieve an additive \(\tilde{O}(k^{1/2})\) approximation.
+    \item \textbf{Set Cover with Matroid Constraints:} If the greedy phase is insufficient, the algorithm reframes coverage as a set cover problem under partition matroid constraints, leveraging submodular maximization to control degree and height.
+\end{itemize}
+
+\vspace{0.2cm}
+
+\noindent
+\textbf{Project Focus \& Comparative Evaluation:}
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{Implementation:} Recreate the directed solution, coding the greedy packing and matroid-constrained set cover components in Python (e.g., using NetworkX).
+    \item \textbf{Comparison:} Adapt classic shortest-path algorithms (Bellman--Ford, Dijkstra) for multicast and compare round complexity, maximum node degree, and communication cost.
+    \item \textbf{Testing:} Evaluate on synthetic and real-world directed graphs (where available).
+\end{itemize}
+
+\vspace{0.2cm}
+
+\noindent
+\textbf{Anticipated Challenges \& Mitigation:}
+\begin{itemize}[leftmargin=0.7cm]
+    \item Implementing the greedy decomposition and partition matroid set cover may be complex; starting with simplified versions and using clear pseudocode/flowcharts will reduce errors.
+\end{itemize}
+
+\vspace{0.2cm}
+
+\noindent
+\textbf{Justification \& Expected Impact:}
+\begin{itemize}[leftmargin=0.7cm]
+    \item \textbf{Relevance:} Central to distributed computing and synchronization tasks.
+    \item \textbf{Novelty:} Combines greedy strategies with matroid-based set covering to approximate an optimal schedule.
+    \item \textbf{Outcome:} A robust multicast algorithm that potentially outperforms standard shortest-path methods in directed networks.
+\end{itemize}
+
+\end{document}

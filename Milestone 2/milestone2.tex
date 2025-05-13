@@ -1,0 +1,99 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb}
+\usepackage{hyperref}
+\usepackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}
+
+\title{Checkpoint 2}
+\author{Hamza Abdullah - ha07194}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Introduction and Problem Statement}
+In many distributed systems, information must be broadcast or multicast efficiently over a network where each informed node can inform at most one neighbor per round. The \emph{Telephone Model} captures this: given a directed graph $G=(V,E)$, a root $r\in V$ initially holds a message, and in each synchronous round, informed vertices send the message along one outgoing edge to uninformed neighbors.  
+
+The \emph{$k$-Multicast} problem (\textbf{$k$-MTM}) asks: given root $r$, terminal set $S\subset V$ of size $t$, and target $k\le t$, find a schedule to inform any $k$ terminals in the fewest rounds. This generalizes broadcast ($k=|V|$) and multicast ($k=|S|$) in directed and undirected graphs.
+
+\section{Main Contributions}
+\begin{enumerate}
+  \item \textbf{Directed $k$-MTM: Additive $\tilde O(\sqrt{k})$ Approximation.}  
+  Theorem~1.2 presents a polynomial-time algorithm with additive $O(\sqrt{k}\,\mathrm{polylog}(k))$ guarantee. Key steps:
+  \begin{itemize}
+    \item \emph{Greedy Packing:} Extract disjoint “good” trees of size $\lceil\sqrt{k}\rceil$ via BFS to depth $D^*$.  
+    \item \emph{Partition Matroid Cover (PMCover):} Formulate covering remaining $k$ as submodular maximization under a partition matroid (degree budgets $B^*$); implement via a simple half-approximation or the $(1-1/e)$-approx routine.
+    \item \emph{Complete:} Merge partial trees and selected cover edges, then extract a shortest-path tree spanning $k$ terminals.
+  \end{itemize}
+
+  \item \textbf{Undirected $k$-MTM: Multiplicative $\tilde O(t^{1/3})$ Approximation.}  
+  Theorem~1.3 achieves $O(t^{1/3}\,\mathrm{polylog}(t))$ approximation by:
+  \begin{itemize}
+    \item \emph{Small-Tree Packing:} Greedily find disjoint trees of size $t^{1/3}$, contract each to a super-terminal.
+    \item \emph{Alternation:} Either locate a “large” tree covering $t^{1/3}$ super-terminals, or apply PMCover and discard covered terminals, repeating $O(t^{1/3})$ steps.
+  \end{itemize}
+
+  \item \textbf{Novel Use of Matroid-Constrained Submodular Coverage.}  
+  First application of partition-matroid submodular maximization in telephone-multicast scheduling, allowing finer degree control in directed $k$-MTM.
+
+  \item \textbf{Bridging the Approximability Gap.}  
+  Complements prior $O(\sqrt{t})$-additive and $O(\log t/\log\log t)$ bounds by tuning with parameter $k$.
+\end{enumerate}
+
+\section{Directed-Case Algorithm Breakdown}
+\subsection{Greedy Packing of $\sqrt{k}$-Good Trees}
+We maintain $A=\{r\}$, $C=V\setminus\{r\}$. While there exists $c\in C$ whose BFS tree to depth $D^*$ covers $\ge\sqrt{k}$ terminals, extract a subtree of exactly $\lceil\sqrt{k}\rceil$ leaves, add its vertices to $A$, and remove from $C$.
+
+\subsection{Handling Many vs. Few Trees}
+\begin{description}
+  \item[Many Trees ($\ge\sqrt{k}$):] Select any $\sqrt{k}$ trees, connect each root to $r$ via a shortest path, and take a shortest-path tree of the union. Guarantees max-degree $\le2\sqrt{k}$ and height $\le2D^*$.
+  \item[Few Trees ($<\sqrt{k}$):] Use PMCover on the additive partition $(A,C)$ to cover remaining terminals, then \textsc{Complete} to build the final tree with additive $O(\log k\,B^*)$ degree overhead.
+\end{description}
+
+\subsection{Partition Matroid Cover (PMCover)}
+Ground set: uncovered terminals in $C$. Sets: $S_{a,c}=(a,c)$ covering terminals within depth $D^*$ of $c$. Matroid: allow $\le B^*$ sets per $a$. Greedy 1/2-approx picks highest-marginal-gain sets until $k$ covered.
+
+\subsection{Complexity and Guarantees}
+Runs in $\tilde O(m\sqrt{k} + k\cdot m_{\mathrm{cover}})$, achieving an additive $O(\sqrt{k}+\log k\,B^*)$ degree bound and $O(D^*)$ height, i.e.\ additive $\tilde O(\sqrt{k})$ rounds above optimal.
+
+\section{Comparison to Prior Work and Key Data Structures}
+\subsection{Relation to Previous Algorithms}
+\begin{itemize}
+  \item Elkin–Kortsarz's $O(\sqrt{t})$-additive algorithm for directed MTM [EK06a] specializes to $k=t$; we improve to $k\ll t$.  
+  \item EK06a's multiple set-cover differs from our matroid-constrained coverage, giving tighter degree control.  
+  \item Undirected gap: from $O(\log t/\log\log t)$ to $\tilde O(t^{1/3})$ via subtree contraction strategies.
+\end{itemize}
+
+\subsection{Key Data Structures}
+\begin{itemize}
+  \item \emph{Coverage Trees:} BFS trees to depth $D^*$ for each $c\in C$.  
+  \item \emph{Partition Matroid:} Maps each $a\in A$ to its incident cover-sets; per-$a$ counters enforce budgets.
+  \item \emph{Greedy Cover Heap:} Max-heap on marginal gains updates in $O(\log|C|)$ per pick.
+  \item \emph{Shortest-Path Extraction:} Dijkstra/BFS on final union graph.
+\end{itemize}
+
+\subsection{Implementation Challenges}
+\begin{itemize}
+  \item Maintaining vertex-disjointness in greedy packing.  
+  \item Optimizing marginal-gain updates in PMCover.  
+  \item Estimating $D^*$ via binary search or baseline broadcast.
+\end{itemize}
+
+\section{Experimental Design and Evaluation Metrics}
+\subsection{Graph Datasets}
+Directed ER ($n=100,500,1000,5000$, $p=0.05$) and directed power-law (Barabási–Albert, $m=3$), with $t=0.1n$ terminals and $k=\{0.2t,0.5t,0.8t\}$.
+
+\subsection{Baseline Algorithms}
+SPT broadcast, directed-MST broadcast, and greedy matching per round.
+
+\subsection{Metrics}
+Rounds to inform $k$, tree poise (max-degree+height), and algorithm runtime.
+
+\subsection{Visualization}
+Coverage curves (informed vs. round), poise vs. $\sqrt{k}$, runtime vs. $n$ comparing half-approx vs. $(1-1/e)$ PMCover.
+
+\subsection{Reproducibility}
+Unit tests on toy graphs ($n\le10$), modular code organization, and environment captured in \texttt{requirements.txt}.
+
+\end{document}
+
