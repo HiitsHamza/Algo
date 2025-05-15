@@ -1,16 +1,69 @@
-# Telephone k-Multicast Problem (Directed Graphs)
+# Directed k-MTM Multicast
 
-This repository contains the implementation of the directed solution for the Telephone k-Multicast Problem, as described in the paper “[The Telephone k-Multicast Problem](https://arxiv.org/pdf/2410.01048)” (arXiv:2410.01048, APPROX 2024). This project is part of a course final project at Habib University, developed by Hamza Abdullah (School ID: ha07194).
+Python implementation & evaluation of a $\tilde O(\sqrt{k})$‐additive approximation for the directed $k$-MTM problem.
 
 ---
 
-## Overview
+## Quick Start
 
-In the Telephone Model, a message originating at a root node must be spread to a set of terminal nodes in as few rounds as possible—each informed node can call exactly one neighbor per round. This project focuses on the **k-multicast variant**, where the goal is to inform any **\(k\)** out of **\(t\)** terminals efficiently.
+All of the latest code and demo live in **`milestones/Milestone4/`**.
 
-Our implementation for directed graphs follows the paper’s approach:
-- **Low-Poise Tree Construction:** We build a multicast tree minimizing the “poise” (defined as tree height plus maximum node degree).
-- **Greedy Decomposition:** The algorithm iteratively finds disjoint “good” trees (each covering approximately \(\sqrt{k}\) terminals) and connects them via shortest paths to achieve an additive \(\tilde{O}(k^{1/2})\) approximation.
-- **Set Cover with Matroid Constraints:** When the initial greedy phase does not cover \(k\) terminals, the remaining coverage problem is formulated as a set cover problem under partition matroid constraints, using submodular maximization techniques.
+1. **Clone** and enter the repository:
 
-We also compare our approach with classical shortest-path algorithms (Bellman–Ford and Dijkstra) adapted to the multicast setting.
+   ```bash
+   git clone <your-repo-url>
+   cd Algo-Project
+   ```
+
+2. **Navigate** to the final milestone:
+
+   ```bash
+   cd milestones/Milestone4
+   ```
+
+3. **Run the demo**:
+
+   ```bash
+   cd demo
+   python -m demo.demo \
+     --graph ER --n 500 --p 0.005 \
+     --t_ratio 0.2 --k_ratio 0.6 \
+     --D_star 3 --iters 20 --samples 20
+   ```
+
+   This command generates a 500-node Erdős–Rényi graph, picks 100 terminals, sets $k=0.6\times100$, runs depth-3 greedy packing, then all three PMCover routines, stitches the final tree, and simulates the telephone rounds.
+
+4. **Run tests** (from the Milestone4 root):
+
+   ```bash
+   pytest --maxfail=1 -q
+   ```
+
+   All unit tests and a smoke integration test should pass.
+
+5. **Generate benchmarks**:
+
+   ```bash
+   cd ../experiments
+   python -m run_synthetic_benchmarks
+   ```
+
+   The `plots/` folder will be populated with coverage and runtime graphs.
+
+---
+
+## Demo Video
+
+A recorded walkthrough and live demo are available at:
+[[https://habibuniversity-my.sharepoint.com/\:v:/g/personal/ha07194\_st\_habib\_edu\_pk/EWt9SubaxnZKubO3Uha6QGkB8BkNfdeWag8V5KpSQilHvQ?e=RnlxP0](https://habibuniversitymy.sharepoint.com/:v:/g/personal/ha07194_st_habib_edu_pk/EWt9SubaxnZKubO3Uha6QGkB8BkNfdeWag8V5KpSQilHvQ?e=RnlxP0)
+](https://habibuniversity-my.sharepoint.com/:v:/g/personal/ha07194_st_habib_edu_pk/EWt9SubaxnZKubO3Uha6QGkB8BkNfdeWag8V5KpSQilHvQ?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=RnlxP0)
+---
+
+## Milestones
+
+* **Milestone1/**: Proposal & paper selection
+* **Milestone2/**: Technical summary & breakdown
+* **Milestone3/**: Progress report & intermediate code
+* **Milestone4/**: Final code, tests, report, and slides
+
+Refer to each folder for the state at that checkpoint.
